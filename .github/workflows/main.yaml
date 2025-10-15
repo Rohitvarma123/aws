@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Terraform Deploy and Destroy
 
 on:
   push:
@@ -11,14 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.2
 
+      # 3️⃣ Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -26,30 +29,27 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
+      # 4️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
 
+      # 5️⃣ Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
+      # 6️⃣ Terraform Plan (Apply)
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
+      # 7️⃣ Terraform Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
 
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve tfplan
-      
-        
+      # 8️⃣ Terraform Plan Destroy
+      - name: Terraform Plan Destroy
+        run: terraform plan -destroy -out=tfplan_destroy
 
-
-
-
-
-
-        
-
-
-
+      # 9️⃣ Terraform Apply Destroy
+      - name: Terraform Apply Destroy
+        run: terraform apply -auto-approve tfplan_destroy
