@@ -1,7 +1,7 @@
 resource "aws_instance" "web" {
-    ami = "ami-052064a798f08f0d3"
+    ami = "ami-0f9708d1cd2cfee41"
     instance_type = "t2.micro"
-    key_name = "rohit123"
+    key_name = "project2"
     tags = {
     Name = "rohit"
     }
@@ -9,6 +9,6 @@ resource "aws_instance" "web" {
 }
 
 provider "aws" {
-    region = "us-east-1"
+    region = "ap-south-1"
 }
 
